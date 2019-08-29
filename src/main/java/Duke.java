@@ -11,6 +11,8 @@ public class Duke {
                 "____________________________________________________________";
 
         System.out.println(startDuke);
+        String[] lines = new String[100];
+        int i = 0;
 
          while(true) {
              String cmd = userInput.nextLine();
@@ -20,11 +22,27 @@ public class Duke {
                          "____________________________________________________________";
                  System.out.println(bye);
                  break;
+             } else if(cmd.equals("list")){
+                 String listString = "";
+                 for(int j=0; j<i; j++){
+                     String index = new Integer(j).toString();
+                     listString += ("\t"+index+". "+lines[j]+"\n");
+                 }
+                 String list = "____________________________________________________________\n" +
+                         listString +
+                         "____________________________________________________________";
+                 System.out.println(list);
+             } else {
+
+                 lines[i] = cmd;
+                 i++;
+                 String userCmd = "____________________________________________________________\n" +
+                         "\tadded: "+cmd+"\n" +
+                         "____________________________________________________________";
+                 System.out.println(userCmd);
              }
-             String userCmd = "____________________________________________________________\n" +
-                    "\t"+cmd+"\n" +
-                    "____________________________________________________________";
-             System.out.println(userCmd);
+
+
         }
     }
 
