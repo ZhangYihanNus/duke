@@ -4,17 +4,53 @@ public class Duke {
 
     private static Scanner userInput = new Scanner(System.in);
 
-    public Duke() throws DukeCmdException {
+    private Task[] taskList = new Task[100];
+    private String[] taskFileList = new String[100];
+
+    public Duke() throws DukeCmdException, DukeFormatException {
+        ReadTxt fileOpt = new ReadTxt("C:\\Users\\Min\\Desktop\\o\\NUS\\1920-Year2-sem-1\\courses\\CS2113T\\duke\\localList.txt");
+        fileOpt.readFile();
+        this.taskFileList = fileOpt.getLines();
+        String[] rawList = this.taskFileList;
+
+        int i=0;
+        while(rawList[i] != null) {
+            String thisLine = rawList[i];
+            String[] lineItems = thisLine.split(" \\| ");
+            if(lineItems[0].equals("T")) {
+                // this is a todo
+                Todo thisTd = new Todo("todo "+lineItems[2]);
+                if(lineItems[1].equals("1")) thisTd.markAsDone();
+                this.taskList[i] = thisTd;
+                i++;
+            } else if (lineItems[0].equals("E")) {
+                // this is an event
+                Event thisEvt = new Event("event "+lineItems[2], lineItems[3]);
+                if(lineItems[1].equals("1")) thisEvt.markAsDone();
+                this.taskList[i] = thisEvt;
+                i++;
+            } else if (lineItems[0].equals("D")) {
+                // this is a deadline
+                Deadline thisDdl = new Deadline("deadline "+lineItems[2], lineItems[3]);
+                if(lineItems[1].equals("1")) thisDdl.markAsDone();
+                this.taskList[i] = thisDdl;
+                i++;
+            }
+        }
+
         String startDuke = "____________________________________________________________\n" +
                 "   Hello! I'm Duke\n" +
                 "   What can I do for you?\n" +
                 "____________________________________________________________";
 
         System.out.println(startDuke);
-        Task[] lines = new Task[100];
-        int i = 0;
+        
+        //int i = 0;
+        boolean listChanged;
 
          while(true) {
+             listChanged = false;
+             String fileInputLine="";
              String cmd = userInput.nextLine();
              if(cmd.equals("bye")) {
                  String bye = "____________________________________________________________\n" +
@@ -26,7 +62,7 @@ public class Duke {
                  System.out.println("____________________________________________________________\n\tHere are the tasks in the list:\n");
                  for(int j=0; j<i; j++) {
                      String index = Integer.toString(j + 1);
-                     String thisCmd = lines[j].toString();
+                     String thisCmd = this.taskList[j].toString();
                      System.out.println("\t" + index + ". " + thisCmd + "\n");
                  }
                  System.out.println("____________________________________________________________\n");
@@ -39,7 +75,13 @@ public class Duke {
                              "____________________________________________________________\n");
                  } else {
                      int itemDone = Integer.parseInt(cmd.split(" ")[1]);
-                     lines[itemDone-1].markAsDone();
+                     this.taskList[itemDone-1].markAsDone();
+                     listChanged = true;
+                     fileInputLine = rawList[itemDone-1];
+                     String temp1 = fileInputLine.split("\\| 0 \\|")[0];
+                     String temp2 = fileInputLine.split("\\| 0 \\|")[1];
+                     fileInputLine = temp1 + "| 1 |" + temp2;
+                     rawList[itemDone-1] = fileInputLine;
                      System.out.println("____________________________________________________________\n" +
                              "Task " + itemDone + " marked as done!\n" +
                              "____________________________________________________________\n");
@@ -68,7 +110,10 @@ public class Duke {
                              "____________________________________________________________\n");
                      continue;
                  }
-                 lines[i] = thisDdl;
+                 this.taskList[i] = thisDdl;
+                 listChanged = true;
+                 fileInputLine = "D | 0 | " + ddlItem.split("deadline ")[1] + " | " + ddlTime;
+                 rawList[i] = fileInputLine;
                  i++;
                  String thisItem = thisDdl.toString();
                  String reply = "____________________________________________________________\n\tAdded deadline into list:\n" +
@@ -94,7 +139,10 @@ public class Duke {
                              "____________________________________________________________\n");
                      continue;
                  }
-                 lines[i] = thisTodo;
+                 this.taskList[i] = thisTodo;
+                 listChanged = true;
+                 fileInputLine = "T | 0 | " + todoItem.split("todo ")[1];
+                 rawList[i] = fileInputLine;
                  i++;
                  String thisItem = thisTodo.toString();
                  String reply = "____________________________________________________________\n\tAdded todo into list:\n" +
@@ -126,7 +174,10 @@ public class Duke {
                              "____________________________________________________________\n");
                      continue;
                  }
-                 lines[i] = thisEvt;
+                 this.taskList[i] = thisEvt;
+                 listChanged = true;
+                 fileInputLine = "E | 0 | " + evtItem.split("event ")[1] + " | " + evtTime;
+                 rawList[i] = fileInputLine;
                  i++;
                  String thisItem = thisEvt.toString();
                  String reply = "____________________________________________________________\n\tAdded event into list:\n" +
@@ -148,11 +199,20 @@ public class Duke {
                  }
              }
 
-
+             // update list in the txt file
+             if(listChanged) {
+                 fileOpt.clearFile();
+                 fileOpt.setLines(rawList);
+                 fileOpt.writeFile();
+             }
         }
+
+
     }
 
-    public static void main(String[] args) throws DukeCmdException {
+
+
+    public static void main(String[] args) throws DukeCmdException, DukeFormatException {
         String logo = " ____        _        \n"
                 + "|  _ \\ _   _| | _____ \n"
                 + "| | | | | | | |/ / _ \\\n"
@@ -160,12 +220,8 @@ public class Duke {
                 + "|____/ \\__,_|_|\\_\\___|\n";
         System.out.println("Hello from\n" + logo);
 
-        try{
-            Duke theDuke = new Duke();
-        }
-        catch (DukeCmdException e) {
-            System.out.println(e.getMessage());
-        }
+
+        Duke theDuke = new Duke();
     }
 
 }

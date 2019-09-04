@@ -7,12 +7,13 @@ public class Event extends Task {
         this.at = at;
     }
 
-    public String getType() {
-        return "[E]";
-    }
-
     @Override
     public String toString() {
         return "[E][" + super.getStatusIcon() + "] " + super.getDescription().split("event ")[1] + " (at: " + at + ")";
+    }
+
+    @Override
+    public String getDescription() {
+        return super.getDescription();
     }
 }

@@ -1,0 +1,4 @@
+T | 0 | do homework
+E | 1 | night | to night
+D | 1 | quiz | this week
+T | 0 | lab assignments
