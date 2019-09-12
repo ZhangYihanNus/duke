@@ -1,38 +1,40 @@
+/**
+ * Event object inherits Task.
+ * Is a type of task available for use.
+ */
 public class Event extends Task {
+    /**
+    * Contains the date & time in a String.
+    */
+    protected String date;
 
-    protected String at;
-    protected String timeName;
-    protected boolean timeValid = false;
-
-    public Event(String description, String at) throws DukeCmdException, DukeFormatException {
+    /**
+     * Creates event
+     * @param description Description of task.
+     * @param date Event date & time.
+     */
+    public Event(String description, String date){
         super(description);
-        this.at = at;
-        if(at.split(" ").length==2) {
-            DateTime thisDateTime = null;
-            try {
-                thisDateTime = new DateTime(at.split(" ")[0], Integer.parseInt(at.split(" ")[1]));
-                this.timeName = thisDateTime.printDateTime();
-                this.timeValid = true;
-            }
-            catch (Exception e) {
-                System.out.println("____________________________________________________________\n" +
-                        "\t"+"Not a valid date and time, but task recorded.\n" +
-                        "____________________________________________________________\n");
-            }
-        }
+        this.date = date;
     }
 
-    @Override
-    public String toString() {
-        if(this.timeValid) {
-            return "[E][" + super.getStatusIcon() + "] " + super.getDescription().split("event ")[1] + " (at: " + this.timeName + ")";
-        } else {
-            return "[E][" + super.getStatusIcon() + "] " + super.getDescription().split("event ")[1] + " (at: " + at + ")";
-        }
+    /**
+     * Creates event with boolean attached, so as to read from file correctly.
+     * @param description Description of task.
+     * @param date Event date & time.
+     * @param isDone Boolean defining if the task is completed.
+     */
+    public Event(String description, String date, boolean isDone){
+        super(description, isDone);
+        this.date = date;
     }
 
+    /**
+     * Converts event type task to string format for printing.
+     * @return Formatted string representing the event, whether or not it is completed and its date.
+     */
     @Override
-    public String getDescription() {
-        return super.getDescription();
+    public String toString(){
+        return "[E]" + super.toString() + "(at: " + date + ")";
     }
 }

@@ -1,32 +1,40 @@
-public class Deadline extends Task {
+/**
+ * Deadline object inherits Task.
+ * Is a type of task available for use.
+ */
+public class Deadline extends Task{
+    /**
+     * Contains the date & time in a String.
+     */
+    protected String date;
 
-    protected String by;
-    protected String timeName;
-    protected boolean timeValid = false;
-
-    public Deadline(String description, String by) throws DukeCmdException, DukeFormatException {
+    /**
+     * Creates deadline
+     * @param description Description of task.
+     * @param date Deadline date & time.
+     */
+    public Deadline(String description, String date){
         super(description);
-        this.by = by;
-        if(by.split(" ").length==2) {
-            DateTime thisDateTime = null;
-            try {
-                thisDateTime = new DateTime(by.split(" ")[0], Integer.parseInt(by.split(" ")[1]));
-                this.timeName = thisDateTime.printDateTime();
-                this.timeValid = true;
-            } catch (Exception e) {
-                System.out.println("____________________________________________________________\n" +
-                        "\t"+"Not a valid date and time, but task recorded.\n" +
-                        "____________________________________________________________\n");
-            }
-        }
+        this.date = date;
     }
 
+    /**
+     * Creates deadline with boolean attached, so as to read from file correctly.
+     * @param description Description of task.
+     * @param date Deadline date & time.
+     * @param isDone Boolean defining if the task is completed or not.
+     */
+    public Deadline(String description, String date, boolean isDone){
+        super(description, isDone);
+        this.date = date;
+    }
+
+    /**
+     * Converts deadline type task to string format for printing.
+     * @return Formatted string representing the deadline and its date.
+     */
     @Override
-    public String toString() {
-        if(this.timeValid) {
-            return "[D][" + super.getStatusIcon() + "] " + super.getDescription().split("deadline ")[1] + " (by: " + this.timeName + ")";
-        } else {
-            return "[D][" + super.getStatusIcon() + "] " + super.getDescription().split("deadline ")[1] + " (by: " + by + ")";
-        }
+    public String toString(){
+        return "[D]" + super.toString() + "(by: " + date + ")";
     }
 }
